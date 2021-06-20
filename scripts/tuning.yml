@@ -1,0 +1,12 @@
+trainingInput:
+  scaleTier: BASIC_GPU
+  hyperparameters:
+    goal: MAXIMIZE
+    hyperparameterMetricTag: val_acc
+    maxParallelTrials: 5
+    maxTrials: 5
+    algorithm: GRID_SEARCH
+    params:
+      - parameterName: n_neurons
+        type: DISCRETE
+        discreteValues: [100, 200, 300, 400, 500]
