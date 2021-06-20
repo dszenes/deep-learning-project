@@ -1,0 +1,183 @@
+
+# Analysis
+
+```{r, echo = FALSE, message = FALSE}
+source(here::here("scripts/setup.R"))
+```
+
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+We ran 13 models overall, who's results you can see in the table below. We had 3 basic models, a CNN which we constructed ourselves, and two transfer learning CNN models, with Resnet2 and VGG16 as pre-trained models, to which we all added dense layers. We decided to not perform any hyperparameter tuning for Resnet2 because the model produced poor results. We did perform tuning on the number of neurons (50, 100, 200, 300, 400, 500) for the custom model and VGG16.
+
+</div>
+
+```{r}
+cnn <- tfruns::ls_runs(runs_dir = here::here("runs/")) %>%
+  select(
+    run_dir,
+    metric_val_loss,
+    metric_val_acc,
+    flag_n_neurons,
+    samples,
+    epochs,
+    epochs_completed,
+    learning_rate,
+    script
+  ) %>% arrange(desc(metric_val_acc))
+
+DT::datatable(cnn,
+                rownames = FALSE,
+                filter = "top",
+                options = list(pageLength = 10, scrollX = T))
+
+```
+<br>
+
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+Two models performed the best, each with a validation categorical accuracy score of 0.997. We will now use these two models on our test set.
+
+</div>
+
+<br>
+
+```{r}
+kable(cnn[1:2,2:9], "simple")
+```
+
+## Custom CNN
+
+#### Architecture of the network :
+
+<br>
+
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+| Type             | Maps  | Size      | Receptive field | Activation  |
+|------------------|-------|-----------|-----------------|-------------|
+| Fully connected  | -     | 2         | -               | `"softmax"` |
+| Fully connected  | -     | n         | -               | `"relu"`    |
+| Max pooling      | 128   | 16x16     | 2x2             |             |
+| Convolution      | 128   | 33x33     | 3x3             | `"relu"`    |
+| Max pooling      | 128   | 35x35     | 2x2             |             |
+| Convolution      | 128   | 71x71     | 3x3             | `"relu"`    |
+| Max pooling      | 128   | 73x73     | 2x2             |             |
+| Convolution      | 128   | 147x147   | 3x3             | `"relu"`    |
+| Max pooling      | 32    | 149x149   | 2x2             |             |
+| Convolution      | 32    | 298x298   | 3x3             | `"relu"`    |
+| Input            | 1     | 300x300   | -               | -           |
+
+<br>
+
+Our best custom model with n=500 neurons also had the best validation loss value.
+
+<br>
+
+#### Structure of the model:
+* RMSPROP optimizer with learning rate of 0.00001
+* loss = loss categorical crossentropy
+
+<br>
+
+#### Model training setting:
+
+* 100 epochs
+* early stopping with patience = 7
+
+```{r}
+model1 <-
+  load_model_hdf5(
+    here::here("runs/cloudml_2021_06_03_102739696-4/model.hdf5"),
+    custom_objects = list(loss_categorical_crossentropy = loss_categorical_crossentropy)
+  )
+model1
+```
+
+</div>
+
+
+<br>
+
+#### Model prediction based on test set
+
+```{r warning=FALSE}
+source(here::here("scripts/test_model1.R"))
+caret::confusionMatrix(data = as.factor(pred_model1[, 1]),
+                       reference = as.factor(test_set))
+```
+
+<br>
+
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+The performance on the test set is rather impressive. Not only does it only misidentify one image, this single mistake is a false negative, meaning that we would throw away a non-defective piece, which is a less costly mistake than the inverse.
+
+</div>
+
+## Best VGG16 model with 300 neurons
+
+
+```{r}
+vgg16 <-
+  load_model_hdf5(
+    here::here("runs/cloudml_2021_06_06_145113483-5/model.hdf5"),
+    custom_objects = list(loss_categorical_crossentropy = loss_categorical_crossentropy)
+  )
+vgg16
+```
+
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+#### Structure of the model:
+* VGG16 + 2 hidden layers 
+* 2 hidden layers description :
+    + tuning of the number of nodes
+    + relu activation function
+    + l2 regularizer of 0.01
+* Softmax activation function on the last 2 nodes layer
+* RMSPROP optimizer with learning rate of 0.00001
+* loss = loss categorical crossentropy
+
+#### Model training setting:
+* 100 epochs
+* early stopping with patience = 7
+
+</div>
+
+
+<br>
+
+#### Model prediction based on test set
+
+
+```{r warning=FALSE}
+source(here::here("scripts/test_vgg16.R"))
+caret::confusionMatrix(data = as.factor(pred_vgg16[, 1]),
+                       reference = as.factor(test_set))
+```
+
+<br>
+
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+Despite having the same validation accuracy, this model makes more mistakes on the test set. Unlike the other model, it has higher sensitivity than specificity which is not a good trade-off for the task at hand. In addition, it tends to make more false positives, meaning that we would not detect some defective pieces, which is a much more costly mistake.
+
+</div>

@@ -1,0 +1,19 @@
+# Conclusion
+
+```{r, echo = FALSE, message = FALSE}
+source(here::here("scripts/setup.R"))
+```
+
+<br>
+
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+Since the custom model is both more accurate and seems to have the right priorities between specificity and sensitivity we would recommend it for this task. Identifying defective parts is the most important part of this task, and it did it perfectly on the test set.
+
+Overall we are very satisfied with the results of our project. We found a model that could perform the task we wanted to do almost perfectly. We think that this bodes well for the use of deep learning for production quality control in all kinds of sectors. Some companies may decide to simply replace human quality control with such models. Other companies that want to be extra careful may want to employ both human and AI quality control, in order to verify that the model is still working. In any case we believe that neural networks are an excellent tool to use in the context of industrial production.
+
+
+</div>

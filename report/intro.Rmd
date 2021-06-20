@@ -1,0 +1,42 @@
+# Introduction
+
+```{r, echo = FALSE, message = FALSE}
+source(here::here("scripts/setup.R"))
+```
+
+<br>
+
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+*«The coronavirus crisis has shown everyone just how important digital interconnection, well-functioning value and supply networks and a secure and interoperable use of data are for the German industrial sector.»*   [[1]](https://www.bmwi.de/Redaktion/EN/Pressemitteilungen/2020/20200623-industrie-4-0-can-help-us-overcome-the-crisis.html)
+
+These words, expressed by the German Minister of Economics and Energy - Peter Altmaier, show how the political actions taken to contain the spread of COVID-19 have accelerated the digitalisation of the industrial sector. More and more medium-sized enterprises will have to plan their transition to the 4.0 era.
+
+In this project, we will focus on metal castings producers. The process of casting a mechanical component consists in pouring liquid material into a mould of the desired shape which is then left to cool while it solidifies. Castings components are used by several sectors: transportation, defence, electrical machinery, etc... However, this process is not always perfect and some components may turn out to be defective. Depending on which sector receives a defective component, the consequences can be severe and costly.
+In the past, in order to find out whether a component was defect free, an employee had to check the quality of the component. This control phase can also be imperfect in detecting defects due to human error. Defective components can thus potentially be passed on to the market. Human quality control is also costly because of wages and is really time-consuming.
+Various image classification approaches now make it possible to replace this human quality control role, at a lower cost and with a high degree of accuracy.
+The aim of this project is to train several CNN that classify a casting as defective or not defective and compare their accuracy.
+
+For some sectors (i.e aviation or transport) all parts with defects must be recovered because if the producer allows a poorly produced component to escape its factory, the financial and reputational consequences will be considerable.For companies supplying components in critical sectors, requiring precise details, we'll try to find the model that best identifies the defects in these components.
+
+</div>
+
+
+<br>
+
+#### Thus, the research question we will attempt to answer with this project is:
+
+<br>
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+1. **Can neural networks be used to identify casting defects from images captured on the production line?**
+
+
+</div>
+

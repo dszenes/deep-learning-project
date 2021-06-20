@@ -1,0 +1,9 @@
+---
+title: "Identify casting defects from images"
+author: "Szenes, Daniel and del Perugia, Louis"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+```{r child = c('intro.Rmd','data.Rmd' ,'analysis.Rmd', 'concl.Rmd')}
+```
